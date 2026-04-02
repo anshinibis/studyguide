@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>AP Study Guide Generator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --border: #2a2a3a;
+      --accent: #c8a96e;
+      --accent2: #6e8ec8;
+      --text: #e8e8f0;
+      --muted: #888899;
+      --error: #e05c5c;
+      --success: #5ce08a;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Background texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse 80% 50% at 20% 20%, rgba(110, 142, 200, 0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(200, 169, 110, 0.07) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 60px 24px 100px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 56px;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    .header-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 6vw, 3.4rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.6;
+    }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 40px 0;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .divider span {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    /* Form */
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      animation: fadeUp 0.8s 0.15s ease both;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .field-hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: -4px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    textarea,
+    select {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      padding: 14px 16px;
+      width: 100%;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(200, 169, 110, 0.1);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 140px;
+      line-height: 1.6;
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888899' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
+      cursor: pointer;
+    }
+
+    select option {
+      background: var(--surface);
+    }
+
+    /* Toggle */
+    .toggle-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .toggle-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      padding: 14px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+    }
+
+    .toggle-btn:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    .toggle-btn.active {
+      background: rgba(200, 169, 110, 0.1);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Conditional sections */
+    .conditional {
+      display: none;
+      flex-direction: column;
+      gap: 28px;
+    }
+    .conditional.visible {
+      display: flex;
+      animation: fadeUp 0.3s ease both;
+    }
+
+    /* File upload */
+    .file-upload {
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      padding: 32px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .file-upload:hover, .file-upload.dragover {
+      border-color: var(--accent);
+      background: rgba(200, 169, 110, 0.05);
+    }
+
+    .file-upload input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .file-upload-icon {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .file-upload-text {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .file-upload-text strong {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .file-list {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .file-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .file-item-remove {
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 16px;
+      line-height: 1;
+      padding: 2px 4px;
+      border-radius: 4px;
+      transition: color 0.2s;
+    }
+
+    .file-item-remove:hover { color: var(--error); }
+
+    /* Submit button */
+    .submit-btn {
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      color: #0a0a0f;
+      cursor: pointer;
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      padding: 18px 32px;
+      width: 100%;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      background: #d9ba80;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(200, 169, 110, 0.25);
+    }
+
+    .submit-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .submit-btn .btn-text { transition: opacity 0.2s; }
+    .submit-btn .btn-loading { 
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .submit-btn.loading .btn-text { opacity: 0; }
+    .submit-btn.loading .btn-loading { opacity: 1; }
+
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(10,10,15,0.3);
+      border-top-color: #0a0a0f;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    /* Status messages */
+    .status {
+      display: none;
+      border-radius: 8px;
+      padding: 16px 20px;
+      font-size: 14px;
+      line-height: 1.5;
+      animation: fadeUp 0.3s ease both;
+    }
+
+    .status.success {
+      display: block;
+      background: rgba(92, 224, 138, 0.08);
+      border: 1px solid rgba(92, 224, 138, 0.25);
+      color: var(--success);
+    }
+
+    .status.error {
+      display: block;
+      background: rgba(224, 92, 92, 0.08);
+      border: 1px solid rgba(224, 92, 92, 0.25);
+      color: var(--error);
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 60px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--border);
+      letter-spacing: 0.1em;
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Mobile */
+    @media (max-width: 480px) {
+      .container { padding: 40px 16px 80px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <span class="header-tag">AI-Powered Learning</span>
+      <h1>AP Study Guide Generator</h1>
+      <p class="subtitle">Upload your notes or PDFs and get a comprehensive AP-style study guide delivered to your inbox.</p>
+    </div>
+
+    <form class="form" id="studyForm">
+
+      <div class="field">
+        <label>AP Subject</label>
+        <input type="text" id="subject" placeholder="e.g. AP US History, AP Biology, AP Calculus BC" required />
+      </div>
+
+      <div class="field">
+        <label>Difficulty Level</label>
+        <select id="difficulty" required>
+          <option value="" disabled selected>Select difficulty...</option>
+          <option value="Standard">Standard</option>
+          <option value="Hard">Hard</option>
+          <option value="Hardest (5 level)">Hardest (5 level)</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Input Type</label>
+        <div class="toggle-group">
+          <button type="button" class="toggle-btn active" data-value="typed" onclick="setInputType('typed')">✏️ Typed Notes</button>
+          <button type="button" class="toggle-btn" data-value="pdf" onclick="setInputType('pdf')">📄 PDF Upload</button>
+        </div>
+        <input type="hidden" id="inputType" value="typed" />
+      </div>
+
+      <div class="conditional visible" id="typedSection">
+        <div class="field">
+          <label>Your Notes</label>
+          <p class="field-hint">Paste your notes here — the more detail, the better your study guide.</p>
+          <textarea id="notes" placeholder="Paste your notes here..."></textarea>
+        </div>
+      </div>
+
+      <div class="conditional" id="pdfSection">
+        <div class="field">
+          <label>PDF Files</label>
+          <p class="field-hint">Upload one or more PDF files of your notes.</p>
+          <div class="file-upload" id="dropZone">
+            <input type="file" id="pdfFiles" accept=".pdf" multiple onchange="handleFiles(this.files)" />
+            <div class="file-upload-icon">📎</div>
+            <div class="file-upload-text">
+              <strong>Click to upload</strong> or drag and drop<br>
+              PDF files only — multiple files supported
+            </div>
+          </div>
+          <div class="file-list" id="fileList"></div>
+        </div>
+      </div>
+
+      <div class="divider"><span>Delivery</span></div>
+
+      <div class="field">
+        <label>Email Address</label>
+        <p class="field-hint">Your study guide link will be sent here.</p>
+        <input type="email" id="email" placeholder="you@example.com" required />
+      </div>
+
+      <div id="statusMsg" class="status"></div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        <span class="btn-text">Generate My Study Guide →</span>
+        <span class="btn-loading"><div class="spinner"></div></span>
+      </button>
+
+    </form>
+
+    <div class="footer">Powered by AI · Built with n8n</div>
+  </div>
+
+  <script>
+    // ⚠️ REPLACE THIS WITH YOUR N8N PRODUCTION WEBHOOK URL
+    const WEBHOOK_URL = 'http://localhost:5678/webhook/276d8599-6227-451e-891b-8ece2d291376';
+
+    let selectedFiles = [];
+
+    function setInputType(type) {
+      document.getElementById('inputType').value = type;
+      document.querySelectorAll('.toggle-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.value === type);
+      });
+      document.getElementById('typedSection').classList.toggle('visible', type === 'typed');
+      document.getElementById('pdfSection').classList.toggle('visible', type === 'pdf');
+    }
+
+    function handleFiles(files) {
+      selectedFiles = [...selectedFiles, ...Array.from(files)];
+      renderFileList();
+    }
+
+    function removeFile(index) {
+      selectedFiles.splice(index, 1);
+      renderFileList();
+    }
+
+    function renderFileList() {
+      const list = document.getElementById('fileList');
+      list.innerHTML = selectedFiles.map((f, i) => `
+        <div class="file-item">
+          <span>📄 ${f.name}</span>
+          <span class="file-item-remove" onclick="removeFile(${i})">×</span>
+        </div>
+      `).join('');
+    }
+
+    // Drag and drop
+    const dropZone = document.getElementById('dropZone');
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      handleFiles(e.dataTransfer.files);
+    });
+
+    function showStatus(type, message) {
+      const el = document.getElementById('statusMsg');
+      el.className = `status ${type}`;
+      el.textContent = message;
+    }
+
+    document.getElementById('studyForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.classList.add('loading');
+
+      const inputType = document.getElementById('inputType').value;
+      const subject = document.getElementById('subject').value;
+      const difficulty = document.getElementById('difficulty').value;
+      const email = document.getElementById('email').value;
+      const notes = document.getElementById('notes').value;
+
+      try {
+        const formData = new FormData();
+        formData.append('input type', inputType);
+        formData.append('AP Subject', subject);
+        formData.append('Difficulty', difficulty);
+        formData.append('email', email);
+        formData.append('notes', notes);
+
+        if (inputType === 'pdf') {
+          if (selectedFiles.length === 0) {
+            showStatus('error', 'Please upload at least one PDF file.');
+            btn.disabled = false;
+            btn.classList.remove('loading');
+            return;
+          }
+          selectedFiles.forEach(file => formData.append('pdf files', file));
+        } else {
+          if (!notes.trim()) {
+            showStatus('error', 'Please enter your notes.');
+            btn.disabled = false;
+            btn.classList.remove('loading');
+            return;
+          }
+        }
+
+        await fetch(WEBHOOK_URL, { method: 'POST', body: formData });
+
+        showStatus('success', '✓ Your study guide is being generated! Check your email in a few minutes.');
+        document.getElementById('studyForm').reset();
+        selectedFiles = [];
+        renderFileList();
+        setInputType('typed');
+
+      } catch (err) {
+        showStatus('error', 'Something went wrong. Please check your connection and try again.');
+      }
+
+      btn.disabled = false;
+      btn.classList.remove('loading');
+    });
+  </script>
+</body>
+</html>
