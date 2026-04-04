@@ -30,7 +30,6 @@
       overflow-x: hidden;
     }
 
-    /* Background texture */
     body::before {
       content: '';
       position: fixed;
@@ -50,7 +49,6 @@
       z-index: 1;
     }
 
-    /* Header */
     .header {
       text-align: center;
       margin-bottom: 56px;
@@ -87,7 +85,6 @@
       line-height: 1.6;
     }
 
-    /* Divider */
     .divider {
       display: flex;
       align-items: center;
@@ -108,7 +105,6 @@
       text-transform: uppercase;
     }
 
-    /* Form */
     .form {
       display: flex;
       flex-direction: column;
@@ -177,7 +173,6 @@
       background: var(--surface);
     }
 
-    /* Toggle */
     .toggle-group {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -210,7 +205,6 @@
       color: var(--accent);
     }
 
-    /* Conditional sections */
     .conditional {
       display: none;
       flex-direction: column;
@@ -221,7 +215,6 @@
       animation: fadeUp 0.3s ease both;
     }
 
-    /* File upload */
     .file-upload {
       border: 1px dashed var(--border);
       border-radius: 8px;
@@ -294,7 +287,6 @@
 
     .file-item-remove:hover { color: var(--error); }
 
-    /* Submit button */
     .submit-btn {
       background: var(--accent);
       border: none;
@@ -351,7 +343,6 @@
       animation: spin 0.7s linear infinite;
     }
 
-    /* Status messages */
     .status {
       display: none;
       border-radius: 8px;
@@ -375,7 +366,6 @@
       color: var(--error);
     }
 
-    /* Footer */
     .footer {
       text-align: center;
       margin-top: 60px;
@@ -385,7 +375,6 @@
       letter-spacing: 0.1em;
     }
 
-    /* Animations */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(16px); }
       to { opacity: 1; transform: translateY(0); }
@@ -395,7 +384,6 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Mobile */
     @media (max-width: 480px) {
       .container { padding: 40px 16px 80px; }
     }
@@ -437,9 +425,14 @@
 
       <div class="conditional visible" id="typedSection">
         <div class="field">
-          <label>Your Notes</label>
-          <p class="field-hint">Paste your notes here — the more detail, the better your study guide.</p>
+          <label>Topic 1 Notes</label>
+          <p class="field-hint">Paste your first set of notes here — the more detail, the better your study guide.</p>
           <textarea id="notes" placeholder="Paste your notes here..."></textarea>
+        </div>
+        <div class="field">
+          <label>Topic 2 Notes <span style="color: var(--muted); font-size: 10px; text-transform: none; letter-spacing: 0;">(Optional)</span></label>
+          <p class="field-hint">Have notes on a second topic? Paste them here and they'll be merged into one unified guide.</p>
+          <textarea id="notes2" placeholder="Paste additional notes here..."></textarea>
         </div>
       </div>
 
@@ -514,7 +507,6 @@
       `).join('');
     }
 
-    // Drag and drop
     const dropZone = document.getElementById('dropZone');
     dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
     dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
@@ -542,6 +534,7 @@
       const difficulty = document.getElementById('difficulty').value;
       const email = document.getElementById('email').value;
       const notes = document.getElementById('notes').value;
+      const notes2 = document.getElementById('notes2').value;
 
       try {
         const formData = new FormData();
@@ -550,6 +543,7 @@
         formData.append('Difficulty', difficulty);
         formData.append('email', email);
         formData.append('notes', notes);
+        formData.append('notes2', notes2);
 
         if (inputType === 'pdf') {
           if (selectedFiles.length === 0) {
