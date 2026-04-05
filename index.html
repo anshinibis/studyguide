@@ -215,6 +215,70 @@
       animation: fadeUp 0.3s ease both;
     }
 
+    /* Notes boxes */
+    .notes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .notes-item {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .notes-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .notes-item-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .notes-remove-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: color 0.2s;
+    }
+
+    .notes-remove-btn:hover { color: var(--error); }
+
+    .add-notes-btn {
+      background: transparent;
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      color: var(--accent);
+      cursor: pointer;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      padding: 12px;
+      text-align: center;
+      width: 100%;
+      transition: all 0.2s;
+      text-transform: uppercase;
+    }
+
+    .add-notes-btn:hover {
+      border-color: var(--accent);
+      background: rgba(200, 169, 110, 0.05);
+    }
+
+    /* File upload */
     .file-upload {
       border: 1px dashed var(--border);
       border-radius: 8px;
@@ -311,17 +375,10 @@
       box-shadow: 0 8px 24px rgba(200, 169, 110, 0.25);
     }
 
-    .submit-btn:active:not(:disabled) {
-      transform: translateY(0);
-    }
-
-    .submit-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
+    .submit-btn:active:not(:disabled) { transform: translateY(0); }
+    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
     .submit-btn .btn-text { transition: opacity 0.2s; }
-    .submit-btn .btn-loading { 
+    .submit-btn .btn-loading {
       position: absolute;
       inset: 0;
       display: flex;
@@ -330,7 +387,6 @@
       opacity: 0;
       transition: opacity 0.2s;
     }
-
     .submit-btn.loading .btn-text { opacity: 0; }
     .submit-btn.loading .btn-loading { opacity: 1; }
 
@@ -351,14 +407,12 @@
       line-height: 1.5;
       animation: fadeUp 0.3s ease both;
     }
-
     .status.success {
       display: block;
       background: rgba(92, 224, 138, 0.08);
       border: 1px solid rgba(92, 224, 138, 0.25);
       color: var(--success);
     }
-
     .status.error {
       display: block;
       background: rgba(224, 92, 92, 0.08);
@@ -379,10 +433,7 @@
       from { opacity: 0; transform: translateY(16px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     @media (max-width: 480px) {
       .container { padding: 40px 16px 80px; }
@@ -401,7 +452,58 @@
 
       <div class="field">
         <label>AP Subject</label>
-        <input type="text" id="subject" placeholder="e.g. AP US History, AP Biology, AP Calculus BC" required />
+        <select id="subject" required>
+          <option value="" disabled selected>Select your AP subject...</option>
+          <optgroup label="Math & Computer Science">
+            <option>AP Calculus AB</option>
+            <option>AP Calculus BC</option>
+            <option>AP Statistics</option>
+            <option>AP Computer Science A</option>
+            <option>AP Computer Science Principles</option>
+            <option>AP Precalculus</option>
+          </optgroup>
+          <optgroup label="Sciences">
+            <option>AP Biology</option>
+            <option>AP Chemistry</option>
+            <option>AP Physics 1</option>
+            <option>AP Physics 2</option>
+            <option>AP Physics C: Mechanics</option>
+            <option>AP Physics C: Electricity and Magnetism</option>
+            <option>AP Environmental Science</option>
+          </optgroup>
+          <optgroup label="English">
+            <option>AP English Language and Composition</option>
+            <option>AP English Literature and Composition</option>
+          </optgroup>
+          <optgroup label="History & Social Sciences">
+            <option>AP US History</option>
+            <option>AP World History: Modern</option>
+            <option>AP European History</option>
+            <option>AP US Government and Politics</option>
+            <option>AP Comparative Government and Politics</option>
+            <option>AP Psychology</option>
+            <option>AP Human Geography</option>
+            <option>AP Macroeconomics</option>
+            <option>AP Microeconomics</option>
+          </optgroup>
+          <optgroup label="Arts & Other">
+            <option>AP Art History</option>
+            <option>AP Music Theory</option>
+            <option>AP Studio Art: Drawing</option>
+            <option>AP Studio Art: 2-D Design</option>
+            <option>AP Studio Art: 3-D Design</option>
+          </optgroup>
+          <optgroup label="World Languages">
+            <option>AP Spanish Language and Culture</option>
+            <option>AP Spanish Literature and Culture</option>
+            <option>AP French Language and Culture</option>
+            <option>AP German Language and Culture</option>
+            <option>AP Italian Language and Culture</option>
+            <option>AP Chinese Language and Culture</option>
+            <option>AP Japanese Language and Culture</option>
+            <option>AP Latin</option>
+          </optgroup>
+        </select>
       </div>
 
       <div class="field">
@@ -425,14 +527,17 @@
 
       <div class="conditional visible" id="typedSection">
         <div class="field">
-          <label>Topic 1 Notes</label>
-          <p class="field-hint">Paste your first set of notes here — the more detail, the better your study guide.</p>
-          <textarea id="notes" placeholder="Paste your notes here..."></textarea>
-        </div>
-        <div class="field">
-          <label>Topic 2 Notes <span style="color: var(--muted); font-size: 10px; text-transform: none; letter-spacing: 0;">(Optional)</span></label>
-          <p class="field-hint">Have notes on a second topic? Paste them here and they'll be merged into one unified guide.</p>
-          <textarea id="notes2" placeholder="Paste additional notes here..."></textarea>
+          <label>Your Notes</label>
+          <p class="field-hint">Add one box per topic — click below to add more.</p>
+          <div class="notes-list" id="notesList">
+            <div class="notes-item">
+              <div class="notes-item-header">
+                <span class="notes-item-label">Topic 1</span>
+              </div>
+              <textarea placeholder="Paste your notes here..."></textarea>
+            </div>
+          </div>
+          <button type="button" class="add-notes-btn" onclick="addNotesBox()">+ Add Another Topic</button>
         </div>
       </div>
 
@@ -473,7 +578,6 @@
   </div>
 
   <script>
-    // ⚠️ REPLACE THIS WITH YOUR N8N PRODUCTION WEBHOOK URL
     const WEBHOOK_URL = 'https://anshinibis.app.n8n.cloud/webhook/276d8599-6227-451e-891b-8ece2d291376';
 
     let selectedFiles = [];
@@ -485,6 +589,47 @@
       });
       document.getElementById('typedSection').classList.toggle('visible', type === 'typed');
       document.getElementById('pdfSection').classList.toggle('visible', type === 'pdf');
+    }
+
+    function addNotesBox() {
+      const list = document.getElementById('notesList');
+      const count = list.children.length + 1;
+      const item = document.createElement('div');
+      item.className = 'notes-item';
+      item.style.animation = 'fadeUp 0.3s ease both';
+      item.innerHTML = `
+        <div class="notes-item-header">
+          <span class="notes-item-label">Topic ${count}</span>
+          <button type="button" class="notes-remove-btn" onclick="removeNotesBox(this)">×</button>
+        </div>
+        <textarea placeholder="Paste your notes here..."></textarea>
+      `;
+      list.appendChild(item);
+      renumberNotes();
+    }
+
+    function removeNotesBox(btn) {
+      btn.closest('.notes-item').remove();
+      renumberNotes();
+    }
+
+    function renumberNotes() {
+      const items = document.querySelectorAll('.notes-item');
+      items.forEach((item, i) => {
+        item.querySelector('.notes-item-label').textContent = `Topic ${i + 1}`;
+        if (i === 0) {
+          const removeBtn = item.querySelector('.notes-remove-btn');
+          if (removeBtn) removeBtn.remove();
+        }
+      });
+    }
+
+    function getAllNotes() {
+      const textareas = document.querySelectorAll('#notesList textarea');
+      return Array.from(textareas)
+        .map((ta, i) => `TOPIC ${i + 1}:\n${ta.value.trim()}`)
+        .filter((_, i) => document.querySelectorAll('#notesList textarea')[i].value.trim() !== '')
+        .join('\n\n');
     }
 
     function handleFiles(files) {
@@ -533,8 +678,7 @@
       const subject = document.getElementById('subject').value;
       const difficulty = document.getElementById('difficulty').value;
       const email = document.getElementById('email').value;
-      const notes = document.getElementById('notes').value;
-      const notes2 = document.getElementById('notes2').value;
+      const combinedNotes = getAllNotes();
 
       try {
         const formData = new FormData();
@@ -542,8 +686,7 @@
         formData.append('AP Subject', subject);
         formData.append('Difficulty', difficulty);
         formData.append('email', email);
-        formData.append('notes', notes);
-        formData.append('notes2', notes2);
+        formData.append('notes', combinedNotes);
 
         if (inputType === 'pdf') {
           if (selectedFiles.length === 0) {
@@ -554,7 +697,7 @@
           }
           selectedFiles.forEach(file => formData.append('pdf files', file));
         } else {
-          if (!notes.trim()) {
+          if (!combinedNotes) {
             showStatus('error', 'Please enter your notes.');
             btn.disabled = false;
             btn.classList.remove('loading');
@@ -569,6 +712,14 @@
         selectedFiles = [];
         renderFileList();
         setInputType('typed');
+        document.getElementById('notesList').innerHTML = `
+          <div class="notes-item">
+            <div class="notes-item-header">
+              <span class="notes-item-label">Topic 1</span>
+            </div>
+            <textarea placeholder="Paste your notes here..."></textarea>
+          </div>
+        `;
 
       } catch (err) {
         showStatus('error', 'Something went wrong. Please check your connection and try again.');
